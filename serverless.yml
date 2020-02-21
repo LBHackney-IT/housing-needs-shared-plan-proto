@@ -1,0 +1,85 @@
+service: shared-plan-proto-api
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+  stage: ${opt:stage}
+  region: eu-west-2
+  profile: hackney
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource: "*"
+  environment:
+    CUSTOMERS_TABLE: "${self:service}-${opt:stage, self:provider.stage}-customers"
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+  authorizer:
+    authorizer:
+      name: authorizer
+      type: request
+      resultTtlInSeconds: 0
+
+plugins:
+  - serverless-offline
+  - serverless-offline-ssm
+  - serverless-dynamodb-local
+
+functions:
+  getCustomer:
+    handler: lambda.getCustomer
+    events:
+      - http:
+          path: customers/{customerId}
+          method: get
+          cors: true
+          # authorizer: ${self:custom.authorizer.authorizer}
+  updateCustomer:
+    handler: lambda.updateCustomer
+    events:
+      - http:
+          path: customers/{customerId}
+          method: put
+          cors: true
+          # authorizer: ${self:custom.authorizer.authorizer}
+
+resources:
+  Resources:
+    CustomersDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: customerId
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: customerId
+            KeyType: HASH
+        BillingMode: PROVISIONED
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamEnabled: false
+        TableName: ${self:provider.environment.CUSTOMERS_TABLE}

@@ -1,0 +1,24 @@
+{
+  "name": "shared-plan-api-proto",
+  "version": "1.0.0",
+  "description": "A proto API to store customer vulnerabilities and a shared plan",
+  "main": "lambda.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "npm run test"
+  },
+  "author": "Ben Pirt",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.623.0",
+    "serverless": "^1.64.0",
+    "serverless-dynamodb-local": "^0.2.39",
+    "serverless-offline": "^5.12.1",
+    "serverless-offline-ssm": "^4.1.2"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
+  }
+}
