@@ -1,4 +1,4 @@
-service: shared-plan-proto-api
+service: shared-plan-proto
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -11,9 +11,8 @@ provider:
   name: aws
   runtime: nodejs12.x
 
-  stage: ${opt:stage}
+  stage: ${opt:stage, 'dev'}
   region: eu-west-2
-  profile: hackney
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -23,7 +22,7 @@ provider:
         - dynamodb:PutItem
       Resource: "*"
   environment:
-    CUSTOMERS_TABLE: "${self:service}-${opt:stage, self:provider.stage}-customers"
+    CUSTOMERS_TABLE: "${self:service}-${self:provider.stage}-customers"
 
 custom:
   dynamodb:
@@ -46,7 +45,7 @@ plugins:
 
 functions:
   getCustomer:
-    handler: lambda.getCustomer
+    handler: api/lambda.getCustomer
     events:
       - http:
           path: customers/{customerId}
@@ -54,7 +53,7 @@ functions:
           cors: true
           # authorizer: ${self:custom.authorizer.authorizer}
   updateCustomer:
-    handler: lambda.updateCustomer
+    handler: api/lambda.updateCustomer
     events:
       - http:
           path: customers/{customerId}
@@ -81,5 +80,9 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         StreamSpecification:
-          StreamEnabled: false
+          StreamViewType: NEW_AND_OLD_IMAGES
         TableName: ${self:provider.environment.CUSTOMERS_TABLE}
+    UIBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: "${self:service}-${self:provider.stage}-ui"
