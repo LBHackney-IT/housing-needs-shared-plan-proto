@@ -6,7 +6,9 @@ module.exports = (useCases) => {
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'My-Custom-Header': 'foo'
       },
       body: JSON.stringify(data)
     };
@@ -18,14 +20,14 @@ module.exports = (useCases) => {
         return await fn(event)
       } catch (err) {
         if(err.message === 'NotFoundError'){
-          return { statusCode: 404 };
+          return { statusCode: 404, headers: { 'Access-Control-Allow-Origin': '*' } };
         }else if(err.message === 'Unauthorized'){
-            return { statusCode: 401 };
+            return { statusCode: 401, headers: { 'Access-Control-Allow-Origin': '*' } };
         }else if(err.message === 'UserInputError'){
-            return { statusCode: 400 };
+            return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': '*' } };
         }else{
           console.log(err);
-          return { statusCode: 500 }
+          return { statusCode: 500, headers: { 'Access-Control-Allow-Origin': '*' } }
         }
       }
     })
@@ -40,7 +42,7 @@ module.exports = (useCases) => {
 
     updateCustomer: catchError(async (event) => {
       await useCases.updateCustomer(event.pathParameters.customerId, JSON.parse(event.body))
-      return { statusCode: 204 };
+      return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*' } };
     }),
 
     authorizer: async (event) => {

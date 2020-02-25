@@ -6,6 +6,7 @@ import './index.css';
 
 function SuggestedAction(props) {
   const vuln = vulnerabilities.filter(v => v.category === props.vuln)[0];
+  if(vuln.actions.length === 0) return null;
   return <div>
     <h3>{vuln.category}</h3>
     <ul>
@@ -71,15 +72,17 @@ export default class PlanPage extends Component {
   }
 
   addNewAction = () => {
-    const newAction = {
-      id: Math.random().toString(36).substring(2, 10),
-      action: this.state.newAction,
-      date: (new Date()).toISOString(),
-      done: null
+    if(this.state.newAction !== ''){
+      const newAction = {
+        id: Math.random().toString(36).substring(2, 10),
+        action: this.state.newAction,
+        date: (new Date()).toISOString(),
+        done: null
+      }
+      const customer = this.state.customer;
+      customer.plan.actions.push(newAction);
+      this.setState({ customer, newAction: ''}, this.save);
     }
-    const customer = this.state.customer;
-    customer.plan.actions.push(newAction);
-    this.setState({ customer, newAction: ''}, this.save);
   }
 
   changeActionState = (e) => {
