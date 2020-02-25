@@ -37,28 +37,48 @@ custom:
       name: authorizer
       type: request
       resultTtlInSeconds: 0
+  client:
+    bucketName: "${self:service}-${self:provider.stage}-ui"
+    distributionFolder: ui/build
+    indexDocument: index.html
+    errorDocument: index.html
 
 plugins:
   - serverless-offline
   - serverless-offline-ssm
   - serverless-dynamodb-local
+  - serverless-finch
 
 functions:
   getCustomer:
     handler: api/lambda.getCustomer
+    package:
+      exclude:
+        - 'ui/**'
+      include:
+        - 'api/**'
     events:
       - http:
           path: customers/{customerId}
           method: get
-          cors: true
+          cors:
+            origins:
+              - '*'
           # authorizer: ${self:custom.authorizer.authorizer}
   updateCustomer:
     handler: api/lambda.updateCustomer
+    package:
+      exclude:
+        - 'ui/**'
+      include:
+        - 'api/**'
     events:
       - http:
           path: customers/{customerId}
           method: put
-          cors: true
+          cors:
+            origins:
+              - '*'
           # authorizer: ${self:custom.authorizer.authorizer}
 
 resources:

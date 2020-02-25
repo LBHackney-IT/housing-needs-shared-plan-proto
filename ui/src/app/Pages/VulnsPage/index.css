@@ -1,0 +1,36 @@
+.vulnButton{
+  display:inline-block;
+  width:30%;
+  border: 1px solid #000;
+  min-height: 120px;
+  min-width: 200px;
+  padding: 10px;
+  margin: 20px 20px 0 0 !important;
+  vertical-align: top;
+  box-sizing: border-box;
+  text-align:center;
+}
+
+.vulnButton h3{
+  color:inherit;
+}
+
+.vulnButton.selected {
+  background-color: #00513f;
+  color:#FFF;
+}
+
+.vulnButton.hasVuln {
+  background-color: rgb(192, 236, 184);
+}
+
+.moreInfo{
+  margin-top:20px !important;
+}
+
+.moreInfo textarea{
+  width:80%;
+  min-height: 140px;
+  display:block;
+  margin:0 0 20px 0;
+}

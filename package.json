@@ -4,20 +4,20 @@
   "description": "A proto API to store customer vulnerabilities and a shared plan",
   "main": "lambda.js",
   "directories": {
-    "lib": "lib",
-    "postinstall": "(cd api && echo 'Installing API node modules' && npm i); (cd ui && false && echo 'Installing UI node modules' && npm i);"
+    "lib": "lib"
   },
   "scripts": {
-    "test": "npm run test"
+    "test": "npm run test",
+    "postinstall": "(cd api && echo 'Installing API node modules' && npm i); (cd ui && echo 'Installing UI node modules' && npm i);"
   },
   "author": "Ben Pirt",
   "license": "ISC",
   "devDependencies": {
     "serverless": "^1.64.0",
     "serverless-dynamodb-local": "^0.2.39",
+    "serverless-finch": "^2.5.2",
     "serverless-offline": "^5.12.1",
     "serverless-offline-ssm": "^4.1.2"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
