@@ -16,11 +16,6 @@
 }
 
 .vulnButton.selected {
-  background-color: #00513f;
-  color:#FFF;
-}
-
-.vulnButton.hasVuln {
   background-color: rgb(192, 236, 184);
 }
 
@@ -33,4 +28,5 @@
   min-height: 140px;
   display:block;
   margin:0 0 20px 0;
+  font-size:100%;
 }

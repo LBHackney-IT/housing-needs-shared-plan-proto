@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import {FetchCustomer, UpdateCustomer} from '../../Gateways';
 import vulnerabilities from '../../vulnerabilities';
+import defaultAction from '../../DefaultAction';
 import moment from 'moment';
 import './index.css';
 
 function SuggestedAction(props) {
-  const vuln = vulnerabilities.filter(v => v.category === props.vuln)[0];
+  const vuln = props.vulns.filter(v => v.category === props.vuln)[0];
   if(vuln.actions.length === 0) return null;
   return <div>
     <h3>{vuln.category}</h3>
     <ul>
-      {vuln.actions.map(action => <li>
+      {vuln.actions.map(action => <li key={action}>
         {action}
       </li>)}
     </ul>
@@ -137,9 +138,9 @@ export default class PlanPage extends Component {
                   <tbody>
                   {this.state.customer.plan.actions.filter(a => !a.done).map(action => {
                     return <tr key={action.id}>
-                      <td class="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                      <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                       <td>{action.action}</td>
-                      <td class="dateColumn">{moment(action.date).format('D/M/YYYY')}</td>
+                      <td className="dateColumn">{moment(action.date).format('D/M/YYYY')}</td>
                     </tr>
                   })}
                   </tbody>
@@ -157,9 +158,9 @@ export default class PlanPage extends Component {
                     <tbody>
                     {this.state.customer.plan.actions.filter(a => a.done).map(action => {
                       return <tr key={action.id}>
-                        <td class="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                        <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                         <td>{action.action}</td>
-                        <td class="dateColumn">{moment(action.done).format('D/M/YYYY')}</td>
+                        <td className="dateColumn">{moment(action.done).format('D/M/YYYY')}</td>
                       </tr>
                     })}
                     </tbody>
@@ -172,7 +173,9 @@ export default class PlanPage extends Component {
             ? <div className="suggestedActions">
                 <h2>Suggested Actions</h2>
                 <div className="suggestions">
-                  {Object.keys(this.state.customer.vulnerabilities).map(vuln => <SuggestedAction vuln={vuln} />)}
+                  {this.state.customer.vulnerabilities.categories.concat(defaultAction.category).map(
+                    vuln => <SuggestedAction  key={vuln} vuln={vuln} vulns={vulnerabilities.concat([defaultAction])} />
+                  )}
                 </div>
               </div>
             : null}

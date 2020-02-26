@@ -10,12 +10,7 @@ class Vulnerability extends Component {
   }
 
   className = () => {
-    let extraClass = '';
-    if(this.props.selected){
-      extraClass = ' selected';
-    }else if(this.props.hasVuln){
-      extraClass = ' hasVuln';
-    }
+    let extraClass =  this.props.selected ? ' selected' : '';
     return `vulnButton${extraClass}`;
   }
 
@@ -42,19 +37,26 @@ export default class VulnsPage extends Component {
       })
       .catch(err => {
           if(err.message === 'NotFoundError'){
-            this.setState({ customer: { vulnerabilities: {}, plan: { actions: [] }, customerId: this.props.match.params.id } });
+            this.setState({ customer: { vulnerabilities: { categories: [], detail: null }, plan: { actions: [] }, customerId: this.props.match.params.id } });
           }
       });
   }
 
   selectVuln = (selectedVuln) => {
-    this.setState({selectedVuln})
+    this.setState(state => {
+      if(state.customer.vulnerabilities.categories.indexOf(selectedVuln) >=0){
+        state.customer.vulnerabilities.categories = state.customer.vulnerabilities.categories.filter(el => el !== selectedVuln);
+      }else{
+        state.customer.vulnerabilities.categories.push(selectedVuln);
+      }
+      return state;
+    })
   }
 
   captureInput = (e) => {
     const newValue = e.target.value
     this.setState(state => {
-      state.customer.vulnerabilities[this.state.selectedVuln] = newValue;
+      state.customer.vulnerabilities.detail = newValue;
       return state;
     })
   }
@@ -79,13 +81,13 @@ export default class VulnsPage extends Component {
 
     return (
       <div className="lbh-container VulnsPage">
-        <h2>What's the customer's current situation?</h2>
-        <p>Based on conversations and what you know of the customer select the relevant vulnerabilities</p>
-        <ul className="vulnerabilities">{vulnerabilities.map(vuln => <Vulnerability key={vuln.category} {...vuln} onClick={this.selectVuln} hasVuln={!!this.state.customer.vulnerabilities[vuln.category]} selected={vuln.category === this.state.selectedVuln} />)}</ul>
-        {this.state.selectedVuln ? 
+        <h2>Spotting vulnerabilities checklist</h2>
+        <p>These are different prompts for thinking about how vulnerable someone is. Through conversations with the resident and looking at their record, please select any relevant areas and add a note for more context.</p>
+        <ul className="vulnerabilities">{vulnerabilities.map(vuln => <Vulnerability key={vuln.category} {...vuln} onClick={this.selectVuln} selected={this.state.customer.vulnerabilities.categories.indexOf(vuln.category) >= 0} />)}</ul>
+        {this.state.customer.vulnerabilities.categories.length > 0 ? 
           <div className="moreInfo">
             <h2>Can you write more about the customer's current situation?</h2>
-            <textarea onChange={this.captureInput} value={this.state.customer.vulnerabilities[this.state.selectedVuln] || ''}></textarea>
+            <textarea onChange={this.captureInput} value={this.state.customer.vulnerabilities.detail || ''}></textarea>
             <button className="govuk-button lbh-button" onClick={this.save}>Save and continue</button>
           </div>
         : null }

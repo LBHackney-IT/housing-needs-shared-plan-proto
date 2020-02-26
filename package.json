@@ -8,6 +8,8 @@
   },
   "scripts": {
     "test": "npm run test",
+    "deploy": "sls deploy --aws-profile hnserverless --stage production",
+    "deploy-ui": "cd ui && npm run build && cd .. && sls client deploy --no-confirm --aws-profile hnserverless --stage production",
     "postinstall": "(cd api && echo 'Installing API node modules' && npm i); (cd ui && echo 'Installing UI node modules' && npm i);"
   },
   "author": "Ben Pirt",

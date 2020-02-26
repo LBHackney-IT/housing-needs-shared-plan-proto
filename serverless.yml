@@ -10,7 +10,7 @@ service: shared-plan-proto
 provider:
   name: aws
   runtime: nodejs12.x
-
+  memorySize: 256
   stage: ${opt:stage, 'dev'}
   region: eu-west-2
   iamRoleStatements:
@@ -47,8 +47,6 @@ package:
   exclude:
     - 'ui/**'
     - 'api/node_modules/aws-sdk'
-  include:
-    - 'api/**'
 
 plugins:
   - serverless-offline
