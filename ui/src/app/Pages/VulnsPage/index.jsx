@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {FetchCustomer, UpdateCustomer} from '../../Gateways';
-import { Redirect } from 'react-router-dom';
 import vulnerabilities from '../../vulnerabilities';
 import './index.css';
 
@@ -62,17 +61,10 @@ export default class VulnsPage extends Component {
   }
 
   save = () => {
-    UpdateCustomer(this.props.match.params.id, this.state.customer)
-      .then(success => {
-        if(success){
-          this.setState({ redirect: `/customers/${this.props.match.params.id}/plan` });
-        }
-      })
+    UpdateCustomer(this.props.match.params.id, this.state.customer);
   }
 
   render() {
-    if (this.state.redirect) return <Redirect push to={this.state.redirect} />;
-
     if (!this.state.customer) return (
       <div className="lbh-container">
         <h1>Fetching customer record...</h1>
@@ -84,13 +76,11 @@ export default class VulnsPage extends Component {
         <h2>Spotting vulnerabilities checklist</h2>
         <p>These are different prompts for thinking about how vulnerable someone is. Through conversations with the resident and looking at their record, please select any relevant areas and add a note for more context.</p>
         <ul className="vulnerabilities">{vulnerabilities.map(vuln => <Vulnerability key={vuln.category} {...vuln} onClick={this.selectVuln} selected={this.state.customer.vulnerabilities.categories.indexOf(vuln.category) >= 0} />)}</ul>
-        {this.state.customer.vulnerabilities.categories.length > 0 ? 
-          <div className="moreInfo">
-            <h2>Can you write more about the customer's current situation?</h2>
-            <textarea onChange={this.captureInput} value={this.state.customer.vulnerabilities.detail || ''}></textarea>
-            <button className="govuk-button lbh-button" onClick={this.save}>Save and continue</button>
-          </div>
-        : null }
+        <div className="moreInfo">
+          <h2>Can you write more about the customer's current situation?</h2>
+          <textarea onChange={this.captureInput} value={this.state.customer.vulnerabilities.detail || ''}></textarea>
+          <button className="govuk-button lbh-button" onClick={this.save}>Save</button>
+        </div>
       </div>
     );
   }
