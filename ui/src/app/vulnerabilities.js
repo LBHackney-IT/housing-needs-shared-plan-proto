@@ -3,54 +3,48 @@ const vulnerabilities = [
         category: 'Active case with other services',
         eg: 'e.g. adult social care, mental health',
         actions: [
-            'Organise a meeting with the resident and their social worker / care coordinator'
+            'Make contact with the resident’s support worker',
+            'Let your support worker them know we’re working together'
         ]
     },
     {
         category: 'Financial vulnerability',
         eg: 'e.g. increasing arrears, serious benefits shortfall, benefits overpayment',
         actions: [
-            'Refer to Housing Advice and Options to explore financial help available to prevent homelessness (e.g. DHP)',
-            'Contact the overpayments team to suggest staggering payments',
-            'Refer to Hackney Works'
+            'Provide advice on financial help available (e.g. discretionary housing payment)',
+            'Look at Hackney Works for employment advice and opportunities',
+            'Contact Council Tax to make arrangements to pay the money owed'
         ]
     },
     {
         category: 'Unusual behaviour',
         eg: 'e.g. communication doesn’t make sense, obsessive complaints',
         actions: [
-            'Organise a meeting with the probation officer'
+            'Follow up with other known contact agencies'
         ]
     },
     {
-        category: 'Significant transition',
-        eg: 'e.g. leaving care, hospital discharge, prison release',
-        actions: []
-    },
-    {
-        category: 'Emotional shock',
-          eg: 'e.g. bereavement, separation',
-          actions: []
+        category: 'Significant transition or life event',
+        eg: 'e.g. leaving care, hospital discharge, prison release, bereavement, separation',
+        actions: [
+            'Contact support / health / probation',
+            'Seek legal advice'
+        ]
     },
     {
         category: 'Non engagement',
         eg: 'e.g. not replying to calls/emails',
         actions: [
-            'Identify who else is involved that has a good relationship with the resident'
+            'Follow up with other known contact agencies',
+            'Organise a home visit'
         ]
     },
     {
-        category: 'Requires an advocate',
-        eg: 'e.g. needs support to communicate',
+        category: 'Additional needs',
+        eg: 'e.g. needs support to communicate, disability, frail, overwhelmed, time poor',
         actions: [
-            'Offer to go on a home visit with their advocate and build a shared plan together'
-        ]
-    },
-    {
-        category: 'How they are presenting',
-        eg: 'e.g. stressed, overwhelmed, time poor',
-        actions: [
-            'Offer to go on a home visit and build a shared plan with the resident'
+            'Arrange an advocate',
+            'Follow up with other known contact agencies'
         ]
     }
   ]
