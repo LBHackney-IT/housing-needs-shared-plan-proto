@@ -18,6 +18,29 @@ function SuggestedAction(props) {
   </div>
 }
 
+function CopyPasteBox(props) {
+  let text = [`Goal: ${props.customer.plan.goal}`, '']
+  if(props.customer.plan.actions.filter(a => !a.done).length > 0){
+    text.push("Actions to do:")
+    text = text.concat(props.customer.plan.actions.filter(a => !a.done).map(a => {
+      return `[ ] - ${a.action} - agreed on ${moment(a.date).format('D/M/YYYY')}`
+    }))
+    text.push("")
+  }
+  if(props.customer.plan.actions.filter(a => a.done).length > 0){
+    text.push("Completed actions:")
+    text = text.concat(props.customer.plan.actions.filter(a => a.done).map(a => {
+      return `[x] - ${a.action} - done on ${moment(a.done).format('D/M/YYYY')}`
+    }))
+  }
+  return (
+    <div className="copyPaste">
+      <p>You can copy the text below to paste into an email or text</p>
+      <textarea value={text.join("\n")}></textarea>
+    </div>
+  )
+}
+
 
 export default class PlanPage extends Component {
   state = {
@@ -120,53 +143,52 @@ export default class PlanPage extends Component {
                 <button onClick={this.saveGoal}>Save</button>
               </div>}
 
-          <h1>Steps we can both take</h1>
-          <div>
-            <div className="newAction">
-              <input type="text" onChange={this.updateNewAction} value={this.state.newAction}></input>
-              <button onClick={this.addNewAction}>Save</button>
-            </div>
-            {this.state.customer.plan.actions.filter(a => !a.done).length > 0
-              ? <table className="actions actionsTodo">
+        <h1>Steps we can both take</h1>
+          <div className="newAction">
+            <input type="text" onChange={this.updateNewAction} value={this.state.newAction}></input>
+            <button onClick={this.addNewAction}>Save</button>
+          </div>
+          {this.state.customer.plan.actions.filter(a => !a.done).length > 0
+            ? <table className="actions actionsTodo">
+                <thead>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>Agreed on</td>
+                  </tr>
+                </thead>
+                <tbody>
+                {this.state.customer.plan.actions.filter(a => !a.done).map(action => {
+                  return <tr key={action.id}>
+                    <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                    <td>{action.action}</td>
+                    <td className="dateColumn">{moment(action.date).format('D/M/YYYY')}</td>
+                  </tr>
+                })}
+                </tbody>
+              </table>
+            : null}
+            {this.state.customer.plan.actions.filter(a => a.done).length > 0
+              ? <table className="actions actionsComplete">
                   <thead>
                     <tr>
                       <td></td>
                       <td></td>
-                      <td>Agreed on</td>
+                      <td>Completed on</td>
                     </tr>
                   </thead>
                   <tbody>
-                  {this.state.customer.plan.actions.filter(a => !a.done).map(action => {
+                  {this.state.customer.plan.actions.filter(a => a.done).map(action => {
                     return <tr key={action.id}>
                       <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                       <td>{action.action}</td>
-                      <td className="dateColumn">{moment(action.date).format('D/M/YYYY')}</td>
+                      <td className="dateColumn">{moment(action.done).format('D/M/YYYY')}</td>
                     </tr>
                   })}
                   </tbody>
                 </table>
               : null}
-              {this.state.customer.plan.actions.filter(a => a.done).length > 0
-                ? <table className="actions actionsComplete">
-                    <thead>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td>Completed on</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {this.state.customer.plan.actions.filter(a => a.done).map(action => {
-                      return <tr key={action.id}>
-                        <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
-                        <td>{action.action}</td>
-                        <td className="dateColumn">{moment(action.done).format('D/M/YYYY')}</td>
-                      </tr>
-                    })}
-                    </tbody>
-                  </table>
-                : null}
-          </div>
+          <CopyPasteBox customer={this.state.customer} />
         </div>
         <div className="rightColumn">
           {Object.keys(this.state.customer.vulnerabilities).length > 0
