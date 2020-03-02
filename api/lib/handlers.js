@@ -7,8 +7,7 @@ module.exports = (useCases) => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'My-Custom-Header': 'foo'
+        'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify(data)
     };

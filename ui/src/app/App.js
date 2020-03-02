@@ -7,6 +7,7 @@ import VulnsPage from './Pages/VulnsPage';
 import LoginPage from './Pages/LoginPage';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import './css/styles.scss';
+import './App.css';
 
 import { initAll } from 'lbh-frontend';
 

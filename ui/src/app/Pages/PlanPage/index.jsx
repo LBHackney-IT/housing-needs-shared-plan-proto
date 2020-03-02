@@ -131,8 +131,9 @@ export default class PlanPage extends Component {
     return (
       <div className="lbh-container PlanPage">
         <div className="leftColumn">
-          <h1>Create a shared plan</h1>
-          <h2>Goal</h2>
+          <a className="backLink" href="https://beta.singleview.hackney.gov.uk">&lt;&lt; Back to Single View</a>
+          <h2>Create a shared plan</h2>
+          <h3>Goal</h3>
           {this.state.customer.plan.goal && !this.state.editingGoal
             ? <div className="goal">
                 <p>{this.state.customer.plan.goal}</p>
@@ -143,7 +144,7 @@ export default class PlanPage extends Component {
                 <button onClick={this.saveGoal}>Save</button>
               </div>}
 
-        <h1>Steps we can both take</h1>
+        <h2>Steps we can both take</h2>
           <div className="newAction">
             <input type="text" onChange={this.updateNewAction} value={this.state.newAction}></input>
             <button onClick={this.addNewAction}>Save</button>

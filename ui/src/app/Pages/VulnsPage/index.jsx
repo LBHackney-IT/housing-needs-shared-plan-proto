@@ -73,6 +73,7 @@ export default class VulnsPage extends Component {
 
     return (
       <div className="lbh-container VulnsPage">
+        <a className="backLink" href="https://beta.singleview.hackney.gov.uk">&lt;&lt; Back to Single View</a>
         <h2>Spotting vulnerabilities checklist</h2>
         <p>These are different prompts for thinking about how vulnerable someone is. Through conversations with the resident and looking at their record, please select any relevant areas and add a note for more context.</p>
         <ul className="vulnerabilities">{vulnerabilities.map(vuln => <Vulnerability key={vuln.category} {...vuln} onClick={this.selectVuln} selected={this.state.customer.vulnerabilities.categories.indexOf(vuln.category) >= 0} />)}</ul>
