@@ -44,6 +44,11 @@ module.exports = (useCases) => {
       return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*' } };
     }),
 
+    shareCustomerPlan: catchError(async (event) => {
+      await useCases.shareCustomerPlan(event.pathParameters.customerId, JSON.parse(event.body))
+      return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*' } };
+    }),
+
     authorizer: async (event) => {
       const result = await useCases.authorize(event);
       if(result === 'Unauthorized') throw 'Unauthorized';

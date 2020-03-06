@@ -2,3 +2,15 @@ a.backLink {
   display:block;
   margin-bottom:20px;
 }
+
+.button {
+  background-color:#00513f;
+  color:#FFF;
+  border: none;
+  margin-left: 10px;
+  width: 100px;
+  font-size: 100%;
+  padding:5px;
+  text-decoration:none;
+  text-align:center;
+}

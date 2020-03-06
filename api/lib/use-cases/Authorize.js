@@ -1,8 +1,7 @@
-require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 module.exports = (options, useCases) => {
-  const jwt_secret = options.loginData.jwt_secret;
+  const jwt_secret = options.jwtsecret;
 
   const allow = resource => {
     return {
@@ -35,29 +34,17 @@ module.exports = (options, useCases) => {
     }
   }
 
-  const requestAllowed = async (tokenPayload, event, token) => {
-    if(tokenPayload.scope === 'user'){
-      return true;
-    }else if(tokenPayload.scope === 'group'){
-      if(tokenPayload.groupId && event.path.startsWith(`/groups/${tokenPayload.groupId}`)){
-        if(
-          (tokenPayload.methods.length === 1 && tokenPayload.methods[0] === '*') ||
-          tokenPayload.methods.indexOf(event.httpMethod) >= 0
-        ){
-          const validKeys = await useCases.listGroupKeys(tokenPayload.groupId);
-          for(let key of validKeys){
-            if(key.token === token) return true;
-          }
-        }
-      }
+  const requestAllowed = async (tokenPayload, event) => {
+    if( tokenPayload.groups && tokenPayload.groups.indexOf('housingneeds-singleview-beta') >= 0) return true;
+    if(tokenPayload.path && tokenPayload.methods){
+      if(tokenPayload.path === event.path && tokenPayload.methods.indexOf(event.httpMethod.toLowerCase()) >= 0 ) return true
     }
-    return false;
   }
 
   return async (event) => {
     const token = extractTokenFromAuthHeader(event);
     const decodedToken = decodeToken(token);
-    if (token && decodedToken && (await requestAllowed(decodedToken, event, token))) {
+    if (token && decodedToken && (await requestAllowed(decodedToken, event))) {
       return allow(event.methodArn);
     } else {
       return 'Unauthorized';

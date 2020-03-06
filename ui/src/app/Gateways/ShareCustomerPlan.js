@@ -1,14 +1,14 @@
 import { AuthHeader } from '.';
 
-export default (id, customer) =>  {
+export default (id, details) =>  {
   return fetch(
-    `${process.env.REACT_APP_SHARED_PLAN_API_URL}/customers/${id}`,
+    `${process.env.REACT_APP_SHARED_PLAN_API_URL}/customers/${id}/share_plan`,
     {
-      method: 'PUT',
+      method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
       ...AuthHeader(),
-      body: JSON.stringify(customer)
+      body: JSON.stringify(details)
     }
   ).then(function(response) {
     if(response.status === 204){

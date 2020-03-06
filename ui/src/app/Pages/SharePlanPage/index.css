@@ -1,0 +1,14 @@
+.SharePlanPage{
+  padding:0 50px;
+  max-width: 1040px;
+}
+
+.SharePlanPage label, .SharePlanPage button{
+  display:block;
+  margin:20px 0 10px !important;
+}
+
+.SharePlanPage input{
+  min-width:300px;
+  font-size: 100%;
+}

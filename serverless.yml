@@ -23,6 +23,7 @@ provider:
       Resource: "*"
   environment:
     CUSTOMERS_TABLE: "${self:service}-${self:provider.stage}-customers"
+    jwtsecret: ${ssm:/common/hackney-jwt-secret}
 
 custom:
   dynamodb:
@@ -62,7 +63,7 @@ functions:
           path: customers/{customerId}
           method: get
           cors: true
-          # authorizer: ${self:custom.authorizer.authorizer}
+          authorizer: ${self:custom.authorizer.authorizer}
   updateCustomer:
     handler: api/lambda.updateCustomer
     events:
@@ -70,7 +71,17 @@ functions:
           path: customers/{customerId}
           method: put
           cors: true
-          # authorizer: ${self:custom.authorizer.authorizer}
+          authorizer: ${self:custom.authorizer.authorizer}
+  shareCustomerPlan:
+    handler: api/lambda.shareCustomerPlan
+    events:
+      - http:
+          path: customers/{customerId}/share_plan
+          method: post
+          cors: true
+          authorizer: ${self:custom.authorizer.authorizer}
+  authorizer:
+    handler: api/lambda.authorizer
 
 resources:
   Resources:

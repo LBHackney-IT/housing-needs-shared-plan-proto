@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import {FetchCustomer, UpdateCustomer} from '../../Gateways';
 import vulnerabilities from '../../vulnerabilities';
 import defaultAction from '../../DefaultAction';
+import {Link} from 'react-router-dom';
 import moment from 'moment';
+import { username } from '../../lib/Cookie';
+import { Redirect } from 'react-router-dom';
 import './index.css';
 
 function SuggestedAction(props) {
@@ -18,30 +21,6 @@ function SuggestedAction(props) {
   </div>
 }
 
-function CopyPasteBox(props) {
-  let text = [`Goal: ${props.customer.plan.goal}`, '']
-  if(props.customer.plan.actions.filter(a => !a.done).length > 0){
-    text.push("Actions to do:")
-    text = text.concat(props.customer.plan.actions.filter(a => !a.done).map(a => {
-      return `[ ] - ${a.action} - agreed on ${moment(a.date).format('D/M/YYYY')}`
-    }))
-    text.push("")
-  }
-  if(props.customer.plan.actions.filter(a => a.done).length > 0){
-    text.push("Completed actions:")
-    text = text.concat(props.customer.plan.actions.filter(a => a.done).map(a => {
-      return `[x] - ${a.action} - done on ${moment(a.done).format('D/M/YYYY')}`
-    }))
-  }
-  return (
-    <div className="copyPaste">
-      <p>You can copy the text below to paste into an email or text</p>
-      <textarea value={text.join("\n")}></textarea>
-    </div>
-  )
-}
-
-
 export default class PlanPage extends Component {
   state = {
     customer: null,
@@ -51,22 +30,20 @@ export default class PlanPage extends Component {
   componentDidMount() {
     FetchCustomer(this.props.match.params.id)
       .then(customer => {
+        if(!customer.plan) customer.plan = { actions: [] };
         this.setState({ customer, editingGoal: (!customer.plan.goal) });
       })
       .catch(err => {
           if(err.message === 'NotFoundError'){
-            this.setState({ customer: { vulnerabilities: {}, plan: { actions: [] }, customerId: this.props.match.params.id } });
+            this.setState({ customer: { plan: { actions: [] }, vulnerabilities: {}, customerId: this.props.match.params.id } });
+          }else{
+            this.setState({redirect: '/login'})
           }
       });
   }
 
   save = () => {
     UpdateCustomer(this.props.match.params.id, this.state.customer)
-      .then(success => {
-        if(success){
-          this.setState({ redirect: `/customers/${this.props.match.params.id}/plan` });
-        }
-      })
   }
 
   updateGoal = (e) => {
@@ -101,6 +78,7 @@ export default class PlanPage extends Component {
         id: Math.random().toString(36).substring(2, 10),
         action: this.state.newAction,
         date: (new Date()).toISOString(),
+        addedBy: username(),
         done: null
       }
       const customer = this.state.customer;
@@ -119,7 +97,44 @@ export default class PlanPage extends Component {
     this.setState({ customer }, this.save)
   }
 
+  deleteAction = (e) => {
+    const conf = window.confirm;
+    if(conf("Are you sure you want to delete this action?")){
+      const customer = this.state.customer;
+      customer.plan.actions = customer.plan.actions.filter(action => action.id !== e.target.dataset.actionid);
+      this.setState({ customer }, this.save)
+    }
+  }
+
+  editAction = (e) => {
+    this.setState({ editingAction: e.target.dataset.actionid })
+  }
+
+  editActionUpdate = (e) => {
+    console.log(e.target.value);
+    const customer = this.state.customer;
+    const actionId = e.target.dataset.actionid;
+    console.log(actionId)
+    for(let action of customer.plan.actions) {
+      if(action.id === actionId){
+        console.log(action);
+        action.action = e.target.value;
+      }
+    }
+    this.setState({ customer })
+  }
+
+  editActionSave = (e) => {
+    this.setState({ editingAction: null }, this.save)
+  }
+
+  handleKeyPress = (e) => {
+    if(e.key === 'Enter') this.editActionSave(e)
+  }
+
   render() {
+    if (this.state.redirect) return <Redirect push to={this.state.redirect} />;
+
     if (!this.state.customer) {
       return (
         <div className="lbh-container PlanPage">
@@ -128,42 +143,54 @@ export default class PlanPage extends Component {
       );
     }
 
+    const vulnCategories = (this.state.customer.vulnerabilities && this.state.customer.vulnerabilities.categories) || []
+
     return (
       <div className="lbh-container PlanPage">
         <div className="leftColumn">
           <a className="backLink" href="https://beta.singleview.hackney.gov.uk">&lt;&lt; Back to Single View</a>
+          <Link to={`/customers/${this.props.match.params.id}/plan/share`} className="share button">Share</Link>
           <h2>Create a shared plan</h2>
           <h3>Goal</h3>
           {this.state.customer.plan.goal && !this.state.editingGoal
             ? <div className="goal">
                 <p>{this.state.customer.plan.goal}</p>
-                <button onClick={this.editGoal}>Edit</button>
+                <button className="button" onClick={this.editGoal}>Edit</button>
               </div>
             : <div className="goal">
                 <input type="text" onChange={this.updateGoal} value={this.state.customer.plan.goal}></input>
-                <button onClick={this.saveGoal}>Save</button>
+                <button className="button" onClick={this.saveGoal}>Save</button>
               </div>}
 
         <h2>Steps we can both take</h2>
           <div className="newAction">
             <input type="text" onChange={this.updateNewAction} value={this.state.newAction}></input>
-            <button onClick={this.addNewAction}>Save</button>
+            <button className="button" onClick={this.addNewAction}>Save</button>
           </div>
           {this.state.customer.plan.actions.filter(a => !a.done).length > 0
             ? <table className="actions actionsTodo">
                 <thead>
                   <tr>
+                    <td className="doneColumn"></td>
                     <td></td>
-                    <td></td>
-                    <td>Agreed on</td>
+                    <td className="dateColumn">Agreed on</td>
+                    <td className="addedByColumn">Created by</td>
+                    <td className="buttonColumn"></td>
+                    <td className="buttonColumn"></td>
                   </tr>
                 </thead>
                 <tbody>
                 {this.state.customer.plan.actions.filter(a => !a.done).map(action => {
                   return <tr key={action.id}>
-                    <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
-                    <td>{action.action}</td>
-                    <td className="dateColumn">{moment(action.date).format('D/M/YYYY')}</td>
+                    <td><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                    
+                    <td>{this.state.editingAction && this.state.editingAction === action.id
+                    ? <input className="editInput" onChange={this.editActionUpdate} onKeyPress={this.handleKeyPress} data-actionid={action.id} onBlur={this.editActionSave} value={action.action}/>
+                    : action.action}</td>
+                    <td>{moment(action.date).format('D/M/YYYY')}</td>
+                    <td>{action.addedBy}</td>
+                    <td><button className="buttonLink" data-actionid={action.id} onClick={this.editAction}>Edit</button></td>
+                    <td><button className="buttonLink delete" data-actionid={action.id} onClick={this.deleteAction}>Delete</button></td>
                   </tr>
                 })}
                 </tbody>
@@ -176,6 +203,9 @@ export default class PlanPage extends Component {
                       <td></td>
                       <td></td>
                       <td>Completed on</td>
+                      <td className="addedByColumn">Created by</td>
+                      <td className="buttonColumn"></td>
+                      <td className="buttonColumn"></td>
                     </tr>
                   </thead>
                   <tbody>
@@ -184,24 +214,24 @@ export default class PlanPage extends Component {
                       <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                       <td>{action.action}</td>
                       <td className="dateColumn">{moment(action.done).format('D/M/YYYY')}</td>
+                      <td>{action.addedBy}</td>
+                      <td><button className="buttonLink" data-actionid={action.id} onClick={this.editAction}>Edit</button></td>
+                      <td><button className="buttonLink delete" data-actionid={action.id} onClick={this.deleteAction}>Delete</button></td>
                     </tr>
                   })}
                   </tbody>
                 </table>
               : null}
-          <CopyPasteBox customer={this.state.customer} />
         </div>
         <div className="rightColumn">
-          {Object.keys(this.state.customer.vulnerabilities).length > 0
-            ? <div className="suggestedActions">
-                <h2>Suggested Actions</h2>
-                <div className="suggestions">
-                  {this.state.customer.vulnerabilities.categories.concat(defaultAction.category).map(
-                    vuln => <SuggestedAction  key={vuln} vuln={vuln} vulns={vulnerabilities.concat([defaultAction])} />
-                  )}
-                </div>
-              </div>
-            : null}
+          <div className="suggestedActions">
+            <h2>Suggested Actions</h2>
+            <div className="suggestions">
+              {vulnCategories.concat(defaultAction.category).map(
+                vuln => <SuggestedAction  key={vuln} vuln={vuln} vulns={vulnerabilities.concat([defaultAction])} />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );

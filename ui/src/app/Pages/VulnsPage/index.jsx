@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {FetchCustomer, UpdateCustomer} from '../../Gateways';
 import vulnerabilities from '../../vulnerabilities';
+import { Redirect } from 'react-router-dom';
 import './index.css';
 
 class Vulnerability extends Component {
@@ -32,12 +33,16 @@ export default class VulnsPage extends Component {
   componentDidMount() {
     FetchCustomer(this.props.match.params.id)
       .then(customer => {
+        if(!customer.vulnerabilities) customer.vulnerabilities = { categories: [], detail: null };
         this.setState({ customer });
       })
       .catch(err => {
-          if(err.message === 'NotFoundError'){
-            this.setState({ customer: { vulnerabilities: { categories: [], detail: null }, plan: { actions: [] }, customerId: this.props.match.params.id } });
-          }
+        console.log(err.message)
+        if(err.message === 'NotFoundError'){
+          this.setState({ customer: { vulnerabilities: { categories: [], detail: null }, customerId: this.props.match.params.id } });
+        }else{
+          this.setState({redirect: '/login'})
+        }
       });
   }
 
@@ -65,6 +70,8 @@ export default class VulnsPage extends Component {
   }
 
   render() {
+    if (this.state.redirect) return <Redirect push to={this.state.redirect} />;
+
     if (!this.state.customer) return (
       <div className="lbh-container">
         <h1>Fetching customer record...</h1>
