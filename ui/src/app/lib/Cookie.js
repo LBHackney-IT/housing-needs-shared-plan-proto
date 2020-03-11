@@ -15,16 +15,10 @@ export const isLoggedIn = function() {
 
 export const isLoggedInCustomer = function() {
   const hash = window.location.hash;
-  if( hash && hash.match(/\#token=.*/)){
+  if( hash && hash.match(/#token=.*/)){
     const customerToken = hash.replace('#token=', '')
-    const payload = jwt.decode(customerToken);
-    if(payload.path && payload.methods){
-      console.log(payload.path, window.location.pathname)
-      if(window.location.pathname.startsWith(payload.path)){
-        Cookies.set('hackneyCustomerToken', customerToken);
-        return true
-      }
-    }
+    Cookies.set('hackneyCustomerToken', customerToken);
+    return true;
   }
 };
 

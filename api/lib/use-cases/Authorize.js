@@ -41,13 +41,26 @@ module.exports = (options, useCases) => {
     }
   }
 
+  const validateCustomerRequest = async (token, event) => {
+    if(event.path.match(/^\/customers\/[^\/]*$/)){
+      const customerId = event.path.replace('/customers/', '');
+      const customer = await options.dbGateway.getCustomer(customerId)
+      return ( customer.keys && customer.keys[token] )
+    }
+  }
+
   return async (event) => {
     const token = extractTokenFromAuthHeader(event);
-    const decodedToken = decodeToken(token);
-    if (token && decodedToken && (await requestAllowed(decodedToken, event))) {
-      return allow(event.methodArn);
-    } else {
-      return 'Unauthorized';
+    if(token.length === 10){
+      if(await validateCustomerRequest(token, event)){
+        return allow(event.methodArn);
+      }
+    }else{
+      const decodedToken = decodeToken(token);
+      if (token && decodedToken && (await requestAllowed(decodedToken, event))) {
+        return allow(event.methodArn);
+      }
     }
+    return 'Unauthorized';
   };
 }
