@@ -61,14 +61,16 @@ export default class CustomerPlanPage extends Component {
                     <td></td>
                     <td></td>
                     <td>Agreed on</td>
+                    <td className="addedByColumn">Created by</td>
                   </tr>
                 </thead>
                 <tbody>
                 {this.state.customer.plan.actions.filter(a => !a.done).map(action => {
                   return <tr key={action.id}>
-                    <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                    <td className="doneColumn"><input type="checkbox" disabled={true} data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                     <td>{action.action}</td>
                     <td className="dateColumn">{moment(action.date).format('D/M/YYYY')}</td>
+                    <td>{action.addedBy}</td>
                   </tr>
                 })}
                 </tbody>
@@ -81,14 +83,16 @@ export default class CustomerPlanPage extends Component {
                       <td></td>
                       <td></td>
                       <td>Completed on</td>
+                      <td className="addedByColumn">Created by</td>
                     </tr>
                   </thead>
                   <tbody>
                   {this.state.customer.plan.actions.filter(a => a.done).map(action => {
                     return <tr key={action.id}>
-                      <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                      <td className="doneColumn"><input type="checkbox" disabled={true} data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                       <td>{action.action}</td>
                       <td className="dateColumn">{moment(action.done).format('D/M/YYYY')}</td>
+                      <td>{action.addedBy}</td>
                     </tr>
                   })}
                   </tbody>

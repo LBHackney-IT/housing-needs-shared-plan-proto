@@ -45,7 +45,8 @@ module.exports = (useCases) => {
     }),
 
     shareCustomerPlan: catchError(async (event) => {
-      await useCases.shareCustomerPlan(event.pathParameters.customerId, JSON.parse(event.body))
+      const auth = event.headers.Authorization;
+      await useCases.shareCustomerPlan(event.pathParameters.customerId, JSON.parse(event.body), auth)
       return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*' } };
     }),
 

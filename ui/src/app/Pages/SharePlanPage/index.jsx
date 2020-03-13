@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {ShareCustomerPlan} from '../../Gateways';
+import {Link} from 'react-router-dom';
 import './index.css';
 
 export default class SharePlanPage extends Component {
@@ -9,8 +10,11 @@ export default class SharePlanPage extends Component {
   }
   
   sharePlan = () => {
-    if(this.state.details.name && this.state.details.phone){
+    if(this.state.details.name && this.state.details.number){
       ShareCustomerPlan(this.props.match.params.id, this.state.details)
+        .then(() => {
+          this.setState({shared: true})
+        })
     }
   }
 
@@ -24,7 +28,7 @@ export default class SharePlanPage extends Component {
     if(this.state.shared) return (
       <div className="lbh-container SharePlanPage">
         <h2>Share plan</h2>
-        <p>The plan has been shared</p>
+        <p>The plan has been shared. <Link to={`/customers/${this.props.match.params.id}/plan`}>Back to plan</Link></p>
       </div>
     );
 
@@ -34,7 +38,7 @@ export default class SharePlanPage extends Component {
         <label>Customer Name</label>
         <input type="text" name="name" onChange={this.updateDetails}></input>
         <label>Mobile number</label>
-        <input type="text" name="phone" onChange={this.updateDetails}></input>
+        <input type="text" name="number" onChange={this.updateDetails}></input>
         <button className="button" onClick={this.sharePlan}>Share</button>
       </div>
     );
