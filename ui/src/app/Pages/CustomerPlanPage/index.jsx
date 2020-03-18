@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {FetchCustomer} from '../../Gateways';
+import {FetchCustomer, UpdateCustomer} from '../../Gateways';
 import moment from 'moment';
 import { Redirect } from 'react-router-dom';
 import './index.css';
@@ -32,6 +32,10 @@ export default class CustomerPlanPage extends Component {
       }
     }
     this.setState({ customer }, this.save)
+  }
+
+  save = () => {
+    UpdateCustomer(this.props.match.params.id, this.state.customer)
   }
 
   render() {
@@ -67,7 +71,7 @@ export default class CustomerPlanPage extends Component {
                 <tbody>
                 {this.state.customer.plan.actions.filter(a => !a.done).map(action => {
                   return <tr key={action.id}>
-                    <td className="doneColumn"><input type="checkbox" disabled={true} data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                    <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                     <td>{action.action}</td>
                     <td className="dateColumn">{moment(action.date).format('D/M/YYYY')}</td>
                     <td>{action.addedBy}</td>
@@ -89,7 +93,7 @@ export default class CustomerPlanPage extends Component {
                   <tbody>
                   {this.state.customer.plan.actions.filter(a => a.done).map(action => {
                     return <tr key={action.id}>
-                      <td className="doneColumn"><input type="checkbox" disabled={true} data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                      <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                       <td>{action.action}</td>
                       <td className="dateColumn">{moment(action.done).format('D/M/YYYY')}</td>
                       <td>{action.addedBy}</td>
