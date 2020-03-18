@@ -35,10 +35,7 @@ module.exports = (options, useCases) => {
   }
 
   const requestAllowed = async (tokenPayload, event) => {
-    if( tokenPayload.groups && tokenPayload.groups.indexOf('housingneeds-singleview-beta') >= 0) return true;
-    if(tokenPayload.path && tokenPayload.methods){
-      if(tokenPayload.path === event.path && tokenPayload.methods.indexOf(event.httpMethod.toLowerCase()) >= 0 ) return true
-    }
+    return ( tokenPayload.groups && tokenPayload.groups.indexOf('housingneeds-singleview-beta') >= 0);
   }
 
   const validateCustomerRequest = async (token, event) => {
