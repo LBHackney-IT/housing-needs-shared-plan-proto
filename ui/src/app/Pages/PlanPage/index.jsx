@@ -173,7 +173,7 @@ export default class PlanPage extends Component {
                   <tr>
                     <td className="doneColumn"></td>
                     <td></td>
-                    <td className="dateColumn">Agreed on</td>
+                    <td className="dateColumn">Agreed</td>
                     <td className="addedByColumn">Created by</td>
                     <td className="buttonColumn"></td>
                     <td className="buttonColumn"></td>
@@ -182,7 +182,7 @@ export default class PlanPage extends Component {
                 <tbody>
                 {this.state.customer.plan.actions.filter(a => !a.done).map(action => {
                   return <tr key={action.id}>
-                    <td><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                    <td className="govuk-checkboxes__item"><input type="checkbox" className="govuk-checkboxes__input" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                     
                     <td>{this.state.editingAction && this.state.editingAction === action.id
                     ? <input className="editInput" onChange={this.editActionUpdate} onKeyPress={this.handleKeyPress} data-actionid={action.id} onBlur={this.editActionSave} value={action.action}/>
@@ -200,9 +200,9 @@ export default class PlanPage extends Component {
               ? <table className="actions actionsComplete">
                   <thead>
                     <tr>
+                      <td className="doneColumn"></td>
                       <td></td>
-                      <td></td>
-                      <td>Completed on</td>
+                      <td className="dateColumn">Completed</td>
                       <td className="addedByColumn">Created by</td>
                       <td className="buttonColumn"></td>
                       <td className="buttonColumn"></td>
@@ -211,9 +211,9 @@ export default class PlanPage extends Component {
                   <tbody>
                   {this.state.customer.plan.actions.filter(a => a.done).map(action => {
                     return <tr key={action.id}>
-                      <td className="doneColumn"><input type="checkbox" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
+                      <td className="govuk-checkboxes__item"><input type="checkbox" className="govuk-checkboxes__input" data-actionid={action.id} onChange={this.changeActionState} checked={!!action.done}></input></td>
                       <td>{action.action}</td>
-                      <td className="dateColumn">{moment(action.done).format('D/M/YYYY')}</td>
+                      <td>{moment(action.done).format('D/M/YYYY')}</td>
                       <td>{action.addedBy}</td>
                       <td><button className="buttonLink" data-actionid={action.id} onClick={this.editAction}>Edit</button></td>
                       <td><button className="buttonLink delete" data-actionid={action.id} onClick={this.deleteAction}>Delete</button></td>

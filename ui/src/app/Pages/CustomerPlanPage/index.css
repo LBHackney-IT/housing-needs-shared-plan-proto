@@ -3,17 +3,27 @@
   max-width: 1040px;
 }
 
+@media only screen and (max-width: 600px) {
+  .CustomerPlanPage{
+    padding:0;
+  }
+}
+
 .CustomerPlanPage .actions{
   width:100%;
   margin-bottom: 30px;
 }
 
 .CustomerPlanPage .actions .dateColumn{
-  width:150px;
+  width:100px;
 }
 
 .CustomerPlanPage .actions .doneColumn{
-  width:30px;
+  width:50px;
+}
+
+.CustomerPlanPage .actions .addedByColumn{
+  width:100px;
 }
 
 .CustomerPlanPage .actions thead{

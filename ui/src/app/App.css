@@ -14,3 +14,11 @@ a.backLink {
   text-decoration:none;
   text-align:center;
 }
+.govuk-checkboxes__item{
+  margin-bottom:0;
+  padding-left:0;
+}
+td{
+  vertical-align:top;
+  padding-top:10px;
+}

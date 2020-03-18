@@ -35,14 +35,14 @@
 }
 
 .PlanPage .actions .doneColumn{
-  width:30px;
+  width:50px;
 }
 
 .PlanPage .actions .addedByColumn{
   width:100px;
 }
 
-.PlanPage .actions .buttoConlumn{
+.PlanPage .actions .buttonColumn{
   width:50px;
 }
 
