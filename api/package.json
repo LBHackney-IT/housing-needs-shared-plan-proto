@@ -12,7 +12,7 @@
   "author": "Ben Pirt",
   "license": "ISC",
   "devDependencies": {
-    "aws-sdk": "^2.623.0"
+    "aws-sdk": "^2.814.0"
   },
   "dependencies": {
     "jsonwebtoken": "^8.5.1",
